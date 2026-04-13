@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Upgrade | BitAssistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at 20% 30%, #1a1a4e, #0a0e27);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo h1 { font-size: 28px; font-weight: 700; }
+        .logo span { color: #4f46e5; }
+        .back-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .title-section { text-align: center; margin-bottom: 48px; }
+        .title-section h2 { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+        .title-section p { color: #9ca3af; font-size: 16px; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        .pricing-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(79,70,229,0.3);
+        }
+        .pricing-card.popular { border: 2px solid #4f46e5; background: linear-gradient(135deg, rgba(79,70,229,0.1), rgba(79,70,229,0.05)); }
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #4f46e5;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .plan-name { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+        .plan-price { font-size: 48px; font-weight: 800; color: #4f46e5; margin-bottom: 8px; }
+        .plan-price span { font-size: 16px; font-weight: 400; color: #9ca3af; }
+        .plan-duration { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+        .plan-features { list-style: none; margin-bottom: 32px; }
+        .plan-features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #d1d5db;
+        }
+        .plan-features li i { color: #4f46e5; width: 20px; }
+        .subscribe-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .subscribe-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(79,70,229,0.3); }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-message {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        .success-message {
+            background: rgba(34,197,94,0.2);
+            border: 1px solid rgba(34,197,94,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        .instructions {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        .instructions h3 { margin-bottom: 16px; color: #4f46e5; }
+        .instructions ol { margin-left: 20px; }
+        .instructions li { margin: 10px 0; color: #9ca3af; }
+        .bot-link {
+            display: inline-block;
+            background: #4f46e5;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo"><h1>Bit<span>Assistant</span></h1></div>
+            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+
+        <div class="title-section" id="titleSection">
+            <h2>Choose Your Plan</h2>
+            <p>Upgrade to unlock unlimited messages, voice features, and priority support</p>
+        </div>
+
+        <div class="pricing-grid" id="pricingGrid">
+            <!-- Monthly -->
+            <div class="pricing-card">
+                <div class="plan-name">Monthly</div>
+                <div class="plan-price">500 <span>Stars</span></div>
+                <div class="plan-duration">~$9 per month</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i> Unlimited messages</li>
+                    <li><i class="fas fa-check-circle"></i> Priority support</li>
+                    <li><i class="fas fa-check-circle"></i> Voice input</li>
+                    <li><i class="fas fa-check-circle"></i> Cancel anytime</li>
+                </ul>
+                <button class="subscribe-btn" onclick="subscribe('monthly')">Subscribe Monthly</button>
+            </div>
+
+            <!-- Yearly -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">⭐ BEST VALUE</div>
+                <div class="plan-name">Yearly</div>
+                <div class="plan-price">5,000 <span>Stars</span></div>
+                <div class="plan-duration">~$79 per year (save 33%)</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i> Everything in Monthly</li>
+                    <li><i class="fas fa-check-circle"></i> 2 months free</li>
+                    <li><i class="fas fa-check-circle"></i> Priority processing</li>
+                    <li><i class="fas fa-check-circle"></i> Best value</li>
+                </ul>
+                <button class="subscribe-btn" onclick="subscribe('yearly')">Subscribe Yearly</button>
+            </div>
+
+            <!-- Lifetime -->
+            <div class="pricing-card">
+                <div class="plan-name">Lifetime</div>
+                <div class="plan-price">10,000 <span>Stars</span></div>
+                <div class="plan-duration">~$180 one-time</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i> Everything in Yearly</li>
+                    <li><i class="fas fa-check-circle"></i> Pay once, use forever</li>
+                    <li><i class="fas fa-check-circle"></i> Lifetime updates</li>
+                    <li><i class="fas fa-check-circle"></i> No recurring charges</li>
+                </ul>
+                <button class="subscribe-btn" onclick="subscribe('lifetime')">Get Lifetime</button>
+            </div>
+        </div>
+
+        <div class="instructions" id="instructions">
+            <h3><i class="fas fa-star"></i> How to Pay with Telegram Stars</h3>
+            <ol>
+                <li>1. First, message <a href="https://t.me/MyVA1550_bot" target="_blank" style="color:#4f46e5;">@MyVA1550_bot</a> on Telegram</li>
+                <li>2. Click the "Subscribe" button above for your chosen plan</li>
+                <li>3. A payment invoice will be sent to your Telegram chat</li>
+                <li>4. Click "Pay" and confirm the payment</li>
+                <li>5. Your account will be automatically upgraded instantly!</li>
+            </ol>
+            <p style="margin-top: 16px;">💡 <strong>Need Stars?</strong> You can buy Telegram Stars from <a href="https://t.me/PremiumBot" target="_blank" style="color:#4f46e5;">@PremiumBot</a> or via in-app purchase.</p>
+            <p style="margin-top: 12px;">🔗 <a href="https://t.me/MyVA1550_bot" class="bot-link" target="_blank"><i class="fab fa-telegram"></i> Open @MyVA1550_bot</a></p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i> You are the master account owner! No payment needed.
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        
+        function getToken() { return localStorage.getItem('access_token'); }
+        
+        const token = getToken();
+        if (!token) {
+            window.location.href = 'account.html?mode=login';
+        }
+
+        // Check if user is master account
+        async function checkMasterAccount() {
+            try {
+                const response = await fetch(`${API_URL}/api/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.user && data.user.email === 'danielxox052@gmail.com') {
+                    // Hide pricing grid and show master message
+                    document.getElementById('pricingGrid').style.display = 'none';
+                    document.getElementById('instructions').style.display = 'none';
+                    document.getElementById('titleSection').innerHTML = `
+                        <h2>👑 Master Account</h2>
+                        <p>You are the owner. No payment needed. All features are unlocked!</p>
+                    `;
+                    document.getElementById('successMessage').style.display = 'block';
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        async function subscribe(plan) {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span> Processing...';
+            btn.disabled = true;
+            
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/create_invoice`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ plan: plan })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    errorDiv.style.backgroundColor = 'rgba(34,197,94,0.2)';
+                    errorDiv.style.borderColor = 'rgba(34,197,94,0.3)';
+                    errorDiv.style.color = '#fff';
+                    errorDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.message}`;
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+                } else {
+                    errorDiv.innerHTML = data.error || 'Failed to create invoice. Please try again.';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.innerHTML = 'Network error. Please try again.';
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        checkMasterAccount();
+    </script>
+</body>
+</html>

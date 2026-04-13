@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>BitAssistant | AI Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 12px; }
+        
+        /* Mobile First - Responsive */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .logo { display: flex; align-items: center; gap: 8px; }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: url('icons/ai.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        .logo h1 { font-size: 18px; font-weight: 700; }
+        .logo span { color: #4f46e5; }
+        .header-stats { display: flex; gap: 12px; }
+        .header-stat { text-align: center; }
+        .header-stat-value { font-size: 16px; font-weight: 700; color: #4f46e5; }
+        .header-stat-label { font-size: 9px; color: #6b7280; }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            padding: 4px 10px 4px 6px;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background: #4f46e5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .premium-card {
+            background: linear-gradient(135deg, #1e1b4b, #0a0e27);
+            border: 1px solid rgba(79,70,229,0.3);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .premium-text h2 { font-size: 13px; margin-bottom: 2px; }
+        .premium-text p { font-size: 10px; color: #9ca3af; }
+        .premium-btn {
+            background: #4f46e5;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 12px;
+        }
+        @media (max-width: 700px) { .main-grid { grid-template-columns: 1fr; } }
+        
+        .chat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            height: 480px;
+        }
+        .chat-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .chat-header h3 { font-size: 13px; font-weight: 600; }
+        .chat-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .clear-btn, .export-btn {
+            background: rgba(239,68,68,0.2);
+            border: none;
+            color: #ef4444;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .export-btn { background: rgba(79,70,229,0.2); color: #4f46e5; }
+        .ai-badge {
+            background: rgba(79,70,229,0.2);
+            padding: 3px 8px;
+            border-radius: 16px;
+            font-size: 9px;
+            color: #4f46e5;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .message {
+            display: flex;
+            gap: 8px;
+            max-width: 85%;
+        }
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .message.bot .message-avatar { background: url('icons/ai.jpg') no-repeat center center; background-size: cover; }
+        .message.user .message-avatar { background: #4f46e5; }
+        .message-bubble {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .message.user .message-bubble { background: #4f46e5; }
+        .generated-image {
+            max-width: 180px;
+            border-radius: 10px;
+            margin-top: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        
+        .input-area {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            color: white;
+            font-size: 12px;
+            outline: none;
+        }
+        .input-area input:focus { border-color: #4f46e5; }
+        .input-area button {
+            width: 38px;
+            height: 38px;
+            background: #4f46e5;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+        }
+        .recording { background: #ef4444 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .recording-status {
+            display: none;
+            padding: 0 12px 6px;
+            font-size: 10px;
+            color: #ef4444;
+        }
+        
+        .sidebar-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .sidebar-card h4 { font-size: 11px; font-weight: 600; margin-bottom: 8px; color: #9ca3af; }
+        .history-item {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .history-item:hover { color: #4f46e5; }
+        .history-time { font-size: 9px; color: #6b7280; }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+        }
+        .stat-value { font-size: 16px; font-weight: 700; color: #4f46e5; }
+        .typing {
+            display: none;
+            padding: 0 12px 6px;
+        }
+        .typing-dots {
+            display: inline-flex;
+            gap: 3px;
+            padding: 6px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+        }
+        .typing-dots span {
+            width: 5px;
+            height: 5px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e1b4b;
+            border: 1px solid #4f46e5;
+            border-radius: 12px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+        .notification.show { transform: translateX(0); }
+        .notification i { color: #4f46e5; }
+        .notification span { font-size: 12px; }
+        
+        @media (max-width: 480px) {
+            .container { padding: 8px; }
+            .message { max-width: 95%; }
+            .generated-image { max-width: 140px; }
+            .header-stats { order: 3; width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>Bit<span>Assistant</span></h1>
+            </div>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-value" id="totalChats">0</div>
+                    <div class="header-stat-label">Total</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="todayUsage">0</div>
+                    <div class="header-stat-label">Today</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">50</div>
+                    <div class="header-stat-label">Limit</div>
+                </div>
+            </div>
+            <a href="profile.html" class="user-menu">
+                <div class="user-avatar"><i class="fas fa-user"></i></div>
+                <span id="userName">Loading...</span>
+            </a>
+        </div>
+
+        <div class="premium-card">
+            <div class="premium-text">
+                <h2>🚀 Unlock Premium</h2>
+                <p>Unlimited + Images + Web Search</p>
+            </div>
+            <a href="upgrade.html" class="premium-btn">Upgrade →</a>
+        </div>
+
+        <div class="main-grid">
+            <div class="chat-card">
+                <div class="chat-header">
+                    <h3><i class="fas fa-robot"></i> AI Assistant</h3>
+                    <div class="chat-actions">
+                        <button class="export-btn" id="exportBtn"><i class="fas fa-download"></i> Export</button>
+                        <button class="clear-btn" id="clearHistoryBtn"><i class="fas fa-trash-alt"></i> Clear</button>
+                        <span class="ai-badge"><i class="fas fa-image"></i> Image Gen</span>
+                    </div>
+                </div>
+                <div class="messages" id="messagesArea">
+                    <div class="message bot">
+                        <div class="message-avatar"></div>
+                        <div class="message-bubble">Hi! Try: "generate a cute cat" or "what time is it?"</div>
+                    </div>
+                </div>
+                <div class="typing" id="typingIndicator">
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
+                </div>
+                <div class="input-area">
+                    <button id="voiceBtn"><i class="fas fa-microphone"></i></button>
+                    <input type="text" id="messageInput" placeholder="Type or speak...">
+                    <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <div class="recording-status" id="recordingStatus"><i class="fas fa-circle"></i> Recording...</div>
+            </div>
+
+            <div>
+                <div class="sidebar-card">
+                    <h4>Today</h4>
+                    <div class="stat-item"><span>Remaining</span><span class="stat-value" id="remaining">50</span></div>
+                </div>
+                <div class="sidebar-card">
+                    <h4>Recent</h4>
+                    <div id="historyList">No history</div>
+                </div>
+                <div class="sidebar-card">
+                    <h4>Features</h4>
+                    <div class="stat-item"><span>AI Chat</span><span>✅</span></div>
+                    <div class="stat-item"><span>Voice</span><span>✅</span></div>
+                    <div class="stat-item"><span>Image Gen</span><span>✅</span></div>
+                    <div class="stat-item"><span>Web Search</span><span>✅</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-info-circle"></i>
+        <span id="notifText">Notification</span>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let currentImageUrl = null;
+        let allMessages = [];
+        
+        function showNotification(msg, type = 'info') {
+            const notif = document.getElementById('notification');
+            const text = document.getElementById('notifText');
+            text.textContent = msg;
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 3000);
+        }
+        
+        function getToken() { return localStorage.getItem('access_token'); }
+        const token = getToken();
+        if (!token) window.location.href = 'account.html?mode=login';
+
+        async function fetchProfile() {
+            try {
+                const res = await fetch(`${API_URL}/api/profile`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.user) {
+                    document.getElementById('userName').textContent = data.user.name;
+                    document.getElementById('totalChats').textContent = data.user.total_usage || 0;
+                    document.getElementById('todayUsage').textContent = data.user.daily_usage || 0;
+                    document.getElementById('remaining').textContent = data.user.is_master ? '∞' : Math.max(0, 50 - (data.user.daily_usage || 0));
+                }
+            } catch(e) {}
+        }
+
+        async function exportChatHistory() {
+            try {
+                const res = await fetch(`${API_URL}/api/history`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.history && data.history.length > 0) {
+                    let exportText = "BitAssistant Chat Export\n";
+                    exportText += "========================\n\n";
+                    for (const msg of data.history) {
+                        exportText += `${msg.role.toUpperCase()}: ${msg.content}\n`;
+                        if (msg.image_url) exportText += `[Image: ${msg.image_url}]\n`;
+                        exportText += "---\n";
+                    }
+                    const blob = new Blob([exportText], { type: 'text/plain' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = `bitassistant_chat_${Date.now()}.txt`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showNotification('Chat exported successfully!');
+                } else {
+                    showNotification('No chat history to export');
+                }
+            } catch(e) {
+                showNotification('Export failed');
+            }
+        }
+
+        function addMessage(text, sender, imageUrl = null) {
+            const area = document.getElementById('messagesArea');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            
+            let bubbleHtml = `<div class="message-avatar"></div><div class="message-bubble">${escapeHtml(text)}</div>`;
+            
+            if (imageUrl && imageUrl !== 'None' && imageUrl !== null && imageUrl !== 'null' && imageUrl !== 'undefined') {
+                currentImageUrl = imageUrl;
+                bubbleHtml = `<div class="message-avatar"></div><div class="message-bubble">
+                    ${escapeHtml(text)}
+                    <div>
+                        <img src="${imageUrl}" class="generated-image" alt="Generated image" crossorigin="anonymous" onload="showNotification('Image loaded!')" onerror="showNotification('Image failed to load')">
+                        <br>
+                        <button class="download-btn" onclick="downloadImage('${imageUrl}')"><i class="fas fa-download"></i> Save</button>
+                    </div>
+                </div>`;
+                showNotification('🎨 Image generated!');
+            }
+            
+            div.innerHTML = bubbleHtml;
+            area.appendChild(div);
+            area.scrollTop = area.scrollHeight;
+            
+            // Store for export
+            allMessages.push({ role: sender, content: text, image_url: imageUrl });
+        }
+
+        function downloadImage(url) {
+            fetch(url).then(r => r.blob()).then(blob => {
+                const link = document.createElement('a');
+                const objectUrl = URL.createObjectURL(blob);
+                link.href = objectUrl;
+                link.download = `bitassistant_${Date.now()}.jpg`;
+                link.click();
+                URL.revokeObjectURL(objectUrl);
+                showNotification('Image saved!');
+            }).catch(() => showNotification('Download failed', 'error'));
+        }
+
+        function escapeHtml(text) { 
+            const div = document.createElement('div'); 
+            div.textContent = text; 
+            return div.innerHTML; 
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            addMessage(text, 'user');
+            input.value = '';
+            document.getElementById('typingIndicator').style.display = 'block';
+            
+            try {
+                const res = await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+                document.getElementById('typingIndicator').style.display = 'none';
+                
+                if (data.image_url && data.image_url !== 'None' && data.image_url !== null && data.image_url !== 'undefined') {
+                    addMessage(data.response, 'bot', data.image_url);
+                } else {
+                    addMessage(data.response, 'bot');
+                }
+                fetchProfile();
+            } catch(e) {
+                document.getElementById('typingIndicator').style.display = 'none';
+                addMessage("Error, please try again.", 'bot');
+                showNotification('Connection error', 'error');
+            }
+        }
+
+        async function clearHistory() {
+            if (confirm('Clear all chat history?')) {
+                await fetch(`${API_URL}/api/clear_history`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+                document.getElementById('messagesArea').innerHTML = '<div class="message bot"><div class="message-avatar"></div><div class="message-bubble">History cleared! How can I help?</div></div>';
+                allMessages = [];
+                showNotification('History cleared');
+            }
+        }
+
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+        document.getElementById('exportBtn').addEventListener('click', exportChatHistory);
+        document.getElementById('messageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        // Voice Recognition
+        let isListening = false;
+        const voiceBtn = document.getElementById('voiceBtn');
+        const recordingStatus = document.getElementById('recordingStatus');
+        let recognition = null;
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            recognition.onstart = () => { isListening = true; voiceBtn.classList.add('recording'); recordingStatus.style.display = 'block'; showNotification('Listening...'); };
+            recognition.onend = () => { isListening = false; voiceBtn.classList.remove('recording'); recordingStatus.style.display = 'none'; };
+            recognition.onresult = (e) => { document.getElementById('messageInput').value = e.results[0][0].transcript; sendMessage(); };
+            recognition.onerror = () => { isListening = false; voiceBtn.classList.remove('recording'); recordingStatus.style.display = 'none'; showNotification('Voice not recognized', 'error'); };
+        } else {
+            voiceBtn.style.display = 'none';
+        }
+
+        voiceBtn.addEventListener('click', () => {
+            if (!recognition) return;
+            if (isListening) recognition.stop();
+            else recognition.start();
+        });
+
+        fetchProfile();
+    </script>
+</body>
+</html>

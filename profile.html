@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Profile | BitAssistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .logo h1 { font-size: 24px; font-weight: 700; }
+        .logo span { color: #4f46e5; }
+        .back-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 800px) {
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+        .profile-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .profile-email { color: #9ca3af; font-size: 14px; margin-bottom: 20px; }
+        .plan-badge {
+            background: rgba(79,70,229,0.2);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #4f46e5;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+        .upgrade-plan-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .logout-btn {
+            width: 100%;
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.3);
+            padding: 12px;
+            border-radius: 40px;
+            color: #ef4444;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .settings-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .settings-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .toggle {
+            width: 48px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+        }
+        .toggle.active { background: #4f46e5; }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 3px;
+            transition: left 0.3s;
+        }
+        .toggle.active::after { left: 25px; }
+        .usage-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .usage-item {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+        }
+        .usage-number { font-size: 28px; font-weight: 700; color: #4f46e5; }
+        .usage-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"><h1>Bit<span>Assistant</span></h1></div>
+            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        </div>
+
+        <div class="profile-grid">
+            <div>
+                <div class="profile-card">
+                    <div class="profile-avatar"><i class="fas fa-user"></i></div>
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-email" id="profileEmail">Loading...</div>
+                    <div class="plan-badge">FREE PLAN</div>
+                    <a href="upgrade.html" class="upgrade-plan-btn"><i class="fas fa-crown"></i> Upgrade to Pro</a>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="settings-section">
+                    <div class="settings-title"><i class="fas fa-chart-line"></i> Usage Statistics</div>
+                    <div class="usage-stats">
+                        <div class="usage-item">
+                            <div class="usage-number" id="totalUsage">0</div>
+                            <div class="usage-label">Total Chats</div>
+                        </div>
+                        <div class="usage-item">
+                            <div class="usage-number" id="todayUsage">0</div>
+                            <div class="usage-label">Today</div>
+                        </div>
+                        <div class="usage-item">
+                            <div class="usage-number" id="remainingUsage">50</div>
+                            <div class="usage-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title"><i class="fas fa-sliders-h"></i> Preferences</div>
+                    <div class="setting-row">
+                        <span>Voice Input</span>
+                        <div class="toggle" id="voiceToggle"></div>
+                    </div>
+                    <div class="setting-row">
+                        <span>Notifications</span>
+                        <div class="toggle" id="notifToggle"></div>
+                    </div>
+                    <div class="setting-row">
+                        <span>Sound Effects</span>
+                        <div class="toggle" id="soundToggle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        function getToken() { return localStorage.getItem('access_token'); }
+        const token = getToken();
+        if (!token) window.location.href = 'account.html?mode=login';
+
+        async function fetchProfile() {
+            try {
+                const res = await fetch(`${API_URL}/api/profile`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.user) {
+                    document.getElementById('profileName').textContent = data.user.name;
+                    document.getElementById('profileEmail').textContent = data.user.email;
+                    document.getElementById('totalUsage').textContent = data.user.total_usage || 0;
+                    document.getElementById('todayUsage').textContent = data.user.daily_usage || 0;
+                    const remaining = Math.max(0, 50 - (data.user.daily_usage || 0));
+                    document.getElementById('remainingUsage').textContent = remaining;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        const savedVoice = localStorage.getItem('voiceEnabled');
+        const savedNotif = localStorage.getItem('notifEnabled');
+        const savedSound = localStorage.getItem('soundEnabled');
+
+        if (savedVoice === 'true') document.getElementById('voiceToggle')?.classList.add('active');
+        if (savedNotif === 'true') document.getElementById('notifToggle')?.classList.add('active');
+        if (savedSound === 'true') document.getElementById('soundToggle')?.classList.add('active');
+
+        document.getElementById('voiceToggle')?.addEventListener('click', function() {
+            this.classList.toggle('active');
+            localStorage.setItem('voiceEnabled', this.classList.contains('active'));
+        });
+        document.getElementById('notifToggle')?.addEventListener('click', function() {
+            this.classList.toggle('active');
+            localStorage.setItem('notifEnabled', this.classList.contains('active'));
+        });
+        document.getElementById('soundToggle')?.addEventListener('click', function() {
+            this.classList.toggle('active');
+            localStorage.setItem('soundEnabled', this.classList.contains('active'));
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'account.html?mode=login';
+        });
+
+        fetchProfile();
+    </script>
+</body>
+</html>
